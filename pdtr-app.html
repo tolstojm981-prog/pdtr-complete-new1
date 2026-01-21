@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="P-DTR">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%232563eb'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial, sans-serif' font-weight='bold'>P</text></svg>">
+    <title>P-DTR Complete - Профессиональный справочник</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            padding-bottom: 70px;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .pro-badge {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+
+        .pro-badge:active {
+            transform: scale(0.95);
+        }
+
+        /* Content */
+        .content {
+            margin-top: 60px;
+            padding: 20px;
+            min-height: calc(100vh - 130px);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .card-icon {
+            font-size: 24px;
+        }
+
+        .card-locked {
+            opacity: 0.6;
+            position: relative;
+        }
+
+        .lock-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 20px;
+            color: var(--warning);
+        }
+
+        /* Search */
+        .search-box {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* Learning Cards */
+        .flashcard {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 40px 30px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .flashcard.flipped {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+        }
+
+        .flashcard-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .flashcard.flipped .flashcard-counter {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .flashcard-question {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .flashcard-answer {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .flashcard-details {
+            margin-top: 20px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .flashcard-hint {
+            margin-top: 20px;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-row .btn {
+            flex: 1;
+            margin-top: 0;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            transition: width 0.3s;
+        }
+
+        /* List Items */
+        .list-item {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .list-item:active {
+            transform: scale(0.98);
+        }
+
+        .list-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .list-item-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .list-item-arrow {
+            color: var(--text-secondary);
+            font-size: 20px;
+        }
+
+        /* Subscription Plans */
+        .plan-card {
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .plan-card:hover, .plan-card.selected {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: var(--warning);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .plan-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .plan-price {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .plan-period {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .plan-features li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+            font-size: 14px;
+        }
+
+        .plan-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Category Badge */
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        /* Patient Card */
+        .patient-card {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .patient-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .patient-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .patient-info {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 90px;
+            left: 20px;
+            right: 20px;
+            background: var(--text-primary);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(150%);
+            transition: transform 0.3s;
+            z-index: 300;
+        }
+
+        .toast.active {
+            transform: translateY(0);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-text {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* Hide scrollbar for iOS */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Diagnostic Checklist */
+        .checklist-item {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .checklist-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .checkbox.checked {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .checklist-title {
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        /* Reference Tables */
+        .reference-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+
+        .reference-table th {
+            background: var(--bg-secondary);
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .reference-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .reference-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Image Container */
+        .image-container {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Accordion */
+        .accordion-item {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s;
+        }
+
+        .accordion-content.active {
+            max-height: 2000px;
+        }
+
+        .accordion-body {
+            padding: 16px;
+            padding-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>P-DTR Complete</h1>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+        <!-- Home Tab -->
+        <div id="homeTab" class="tab-content active">
+            <input type="text" class="search-box" placeholder="🔍 Поиск по всей базе..." oninput="handleSearch(this.value)">
+            
+            <div class="card" onclick="switchTab('learning')">
+                <div class="card-icon">📚</div>
+                <div class="card-title">Обучающие карточки</div>
+                <div class="card-subtitle" id="cardsProgress">200 карточек доступно</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="cardsProgressBar" style="width: 10%"></div>
+                </div>
+            </div>
+
+            <div class="card" onclick="goToReference()">
+                <div class="card-icon">📋</div>
+                <div class="card-title">Избранные таблицы</div>
+                <div class="card-subtitle" id="tablesProgress">15 таблиц доступно</div>
+            </div>
+
+            <div class="card" onclick="goToAnatomyMaps()">
+                <div class="card-icon">🗺️</div>
+                <div class="card-title">Анатомические карты</div>
+                <div class="card-subtitle" id="mapsProgress">8 карт доступно</div>
+            </div>
+
+            <div class="card" onclick="switchTab('diagnostic')">
+                <div class="card-icon">🩺</div>
+                <div class="card-title">Диагностика</div>
+                <div class="card-subtitle">Чек-лист для работы с пациентом</div>
+            </div>
+
+            <div class="card" onclick="switchTab('patients')">
+                <div class="card-icon">👤</div>
+                <div class="card-title">База пациентов</div>
+                <div class="card-subtitle">Управление карточками пациентов</div>
+            </div>
+        </div>
+
+        <!-- Learning Tab -->
+        <div id="learningTab" class="tab-content">
+            <div id="learningContent"></div>
+        </div>
+
+        <!-- Reference Tab -->
+        <div id="referenceTab" class="tab-content">
+            <div id="referenceContent"></div>
+        </div>
+
+        <!-- Diagnostic Tab -->
+        <div id="diagnosticTab" class="tab-content">
+            <div id="diagnosticContent"></div>
+        </div>
+
+        <!-- Patients Tab -->
+        <div id="patientsTab" class="tab-content">
+            <div id="patientsContent"></div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home')">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Главная</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('learning')">
+            <div class="nav-icon">📚</div>
+            <div class="nav-label">Обучение</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('reference')">
+            <div class="nav-icon">🔍</div>
+            <div class="nav-label">Справочник</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('diagnostic')">
+            <div class="nav-icon">🩺</div>
+            <div class="nav-label">Диагностика</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('patients')">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Пациенты</div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script src="pdtr-cards-data.js"></script>
+    <script src="pdtr-reference-data.js"></script>
+    <script>
+        // App State
+        const appState = {
+            cardsViewed: 0,
+            currentCard: 0,
+            cardFlipped: false,
+            knownCards: [],
+            currentTab: 'home',
+            patients: [],
+            diagnosticData: {}
+        };
+
+        // Load state from localStorage
+        function loadState() {
+            const saved = localStorage.getItem('pdtrAppState');
+            if (saved) {
+                Object.assign(appState, JSON.parse(saved));
+            }
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            localStorage.setItem('pdtrAppState', JSON.stringify(appState));
+        }
+
+        // Initialize app
+        loadState();
+        updateUI();
+
+        // Tab Switching
+        function switchTab(tab) {
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.add('active');
+
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            appState.currentTab = tab;
+
+            // Load tab content
+            switch(tab) {
+                case 'learning':
+                    loadLearningContent();
+                    break;
+                case 'reference':
+                    loadReferenceContent();
+                    break;
+                case 'diagnostic':
+                    loadDiagnosticContent();
+                    break;
+                case 'patients':
+                    loadPatientsContent();
+                    break;
+            }
+
+            saveState();
+        }
+
+        // Update UI
+        function updateUI() {
+            const progress = (appState.cardsViewed / 200 * 100);
+            document.getElementById('cardsProgressBar').style.width = progress + '%';
+        }
+
+        // Show toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('active');
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3000);
+        }
+
+        // Handle search
+        function handleSearch(query) {
+            if (query.length < 2) return;
+            // Implement search functionality
+            showToast('🔍 Поиск: ' + query);
+        }
+
+        // Navigation helpers
+        function goToReference() {
+            switchTab('reference');
+        }
+
+        function goToAnatomyMaps() {
+            switchTab('reference');
+            // Scroll to anatomy section
+        }
+
+        // Will implement detailed content loading functions next
+        function loadLearningContent() {
+            const isPro = true; // Always pro since removed monetization
+            const cards = learningCards;
+            const categories = [...new Set(cards.map(c => c.category))];
+            
+            let html = `
+                <div style="margin-bottom: 20px;">
+                    <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 16px;">Обучающие карточки</h2>
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 4px;">Прогресс обучения</div>
+                                <div style="font-size: 14px; color: var(--text-secondary);">${appState.knownCards.length} из ${cards.length} карточек изучено</div>
+                            </div>
+                            <div style="font-size: 32px; font-weight: bold; color: var(--primary);">${Math.round(appState.knownCards.length / cards.length * 100)}%</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${appState.knownCards.length / cards.length * 100}%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="startLearning('all')">📚 Начать обучение (все карточки)</button>
+                
+                <h3 style="margin: 30px 0 16px 0; font-size: 18px; font-weight: 600;">Категории</h3>
+            `;
+            
+            categories.forEach(category => {
+                const categoryCards = cards.filter(c => c.category === category);
+                const knownCount = categoryCards.filter(c => appState.knownCards.includes(cards.indexOf(c))).length;
+                
+                html += `
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(event)">
+                            <div>
+                                <div style="font-weight: 600;">${category}</div>
+                                <div style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">${knownCount}/${categoryCards.length} карточек изучено</div>
+                            </div>
+                            <div style="font-size: 20px;">▼</div>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <div class="progress-bar" style="margin-bottom: 16px;">
+                                    <div class="progress-fill" style="width: ${knownCount / categoryCards.length * 100}%"></div>
+                                </div>
+                                <button class="btn" onclick="startLearning('${category}')">Изучить категорию (${categoryCards.length} карточек)</button>
+                                <button class="btn btn-secondary" onclick="resetCategory('${category}')">Сбросить прогресс</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('learningContent').innerHTML = html;
+        }
+
+        function toggleAccordion(event) {
+            const header = event.currentTarget;
+            const content = header.nextElementSibling;
+            const arrow = header.querySelector('div:last-child');
+            
+            content.classList.toggle('active');
+            arrow.style.transform = content.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        function startLearning(categoryOrAll) {
+            const cards = categoryOrAll === 'all' 
+                ? learningCards 
+                : learningCards.filter(c => c.category === categoryOrAll);
+            
+            if (cards.length === 0) {
+                showToast('Нет карточек в этой категории');
+                return;
+            }
+            
+            appState.currentLearningCards = cards;
+            appState.currentCard = 0;
+            appState.cardFlipped = false;
+            
+            showFlashcard();
+        }
+
+        function showFlashcard() {
+            const cards = appState.currentLearningCards;
+            const card = cards[appState.currentCard];
+            const cardIndex = learningCards.indexOf(card);
+            
+            const html = `
+                <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <button class="btn btn-secondary" onclick="exitLearning()" style="width: auto; padding: 10px 20px;">← Назад</button>
+                    <div style="font-size: 14px; color: var(--text-secondary);">
+                        Карточка ${appState.currentCard + 1} / ${cards.length}
+                    </div>
+                </div>
+                
+                <div class="flashcard ${appState.cardFlipped ? 'flipped' : ''}" onclick="flipCard()">
+                    <div class="flashcard-counter">${appState.currentCard + 1} / ${cards.length}</div>
+                    
+                    ${!appState.cardFlipped ? `
+                        <div class="category-badge">${card.category}</div>
+                        <div class="flashcard-question">${card.question}</div>
+                        ${card.hint ? `
+                            <div style="margin-top: 30px; padding: 16px; background: rgba(37, 99, 235, 0.1); border-radius: 12px; font-size: 14px;">
+                                💡 Подсказка: ${card.hint}
+                            </div>
+                        ` : ''}
+                        <div style="margin-top: 30px; font-size: 14px; opacity: 0.7;">
+                            Нажмите, чтобы увидеть ответ
+                        </div>
+                    ` : `
+                        <div class="category-badge" style="background: rgba(255,255,255,0.2); color: white;">${card.category}</div>
+                        <div style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Ответ:</div>
+                        <div class="flashcard-answer">${card.answer}</div>
+                        ${card.details ? `
+                            <div class="flashcard-details">${card.details}</div>
+                        ` : ''}
+                    `}
+                </div>
+                
+                ${appState.cardFlipped ? `
+                    <div class="btn-row">
+                        <button class="btn btn-danger" onclick="markCard(false)">✗ Не знал</button>
+                        <button class="btn btn-success" onclick="markCard(true)">✓ Знал</button>
+                    </div>
+                ` : ''}
+            `;
+            
+            document.getElementById('learningContent').innerHTML = html;
+        }
+
+        function flipCard() {
+            appState.cardFlipped = !appState.cardFlipped;
+            showFlashcard();
+        }
+
+        function markCard(known) {
+            const cards = appState.currentLearningCards;
+            const card = cards[appState.currentCard];
+            const cardIndex = learningCards.indexOf(card);
+            
+            if (known && !appState.knownCards.includes(cardIndex)) {
+                appState.knownCards.push(cardIndex);
+                appState.cardsViewed++;
+            }
+            
+            saveState();
+            nextCard();
+        }
+
+        function nextCard() {
+            const cards = appState.currentLearningCards;
+            
+            if (appState.currentCard < cards.length - 1) {
+                appState.currentCard++;
+                appState.cardFlipped = false;
+                showFlashcard();
+            } else {
+                // Finished all cards
+                const knownCount = cards.filter(c => appState.knownCards.includes(learningCards.indexOf(c))).length;
+                
+                document.getElementById('learningContent').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🎉</div>
+                        <div class="empty-title">Отличная работа!</div>
+                        <div class="empty-text">Вы изучили ${knownCount} из ${cards.length} карточек</div>
+                        <div class="progress-bar" style="max-width: 300px; margin: 20px auto;">
+                            <div class="progress-fill" style="width: ${knownCount / cards.length * 100}%"></div>
+                        </div>
+                        <button class="btn" onclick="startLearning('${cards[0].category}')">Повторить</button>
+                        <button class="btn btn-secondary" onclick="loadLearningContent()">Назад к категориям</button>
+                    </div>
+                `;
+            }
+        }
+
+        function exitLearning() {
+            loadLearningContent();
+        }
+
+        function resetCategory(category) {
+            const cards = learningCards.filter(c => c.category === category);
+            cards.forEach(card => {
+                const index = learningCards.indexOf(card);
+                const knownIndex = appState.knownCards.indexOf(index);
+                if (knownIndex > -1) {
+                    appState.knownCards.splice(knownIndex, 1);
+                }
+            });
+            saveState();
+            loadLearningContent();
+            showToast('✅ Прогресс категории сброшен');
+        }
+
+        function loadReferenceContent() {
+            const sections = [
+                { key: 'receptors', icon: '🎯', title: 'Рецепторы' },
+                { key: 'patterns', icon: '📊', title: 'Паттерны ингибиции' },
+                { key: 'pathways', icon: '🧠', title: 'Проводящие пути' },
+                { key: 'golgi', icon: '🔧', title: 'Дисфункция Гольджи' },
+                { key: 'vrp', icon: '🫀', title: 'Висцеральная боль (VRP)' },
+                { key: 'muscleOrgan', icon: '💪', title: 'Мышцы-органы' },
+                { key: 'diagnostic', icon: '📋', title: 'Диагностика' }
+            ];
+            
+            let html = `
+                <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 20px;">Справочник P-DTR</h2>
+                <input type="text" class="search-box" placeholder="🔍 Поиск в справочнике..." oninput="searchReference(this.value)">
+            `;
+            
+            sections.forEach(section => {
+                const data = referenceData[section.key];
+                html += `
+                    <div class="card" onclick="showReferenceSection('${section.key}')">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 32px;">${section.icon}</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 16px;">${section.title}</div>
+                                <div style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">
+                                    ${data.sections.length} разделов
+                                </div>
+                            </div>
+                            <div style="font-size: 20px; color: var(--text-secondary);">→</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('referenceContent').innerHTML = html;
+        }
+
+        function showReferenceSection(key) {
+            const data = referenceData[key];
+            
+            let html = `
+                <button class="btn btn-secondary" onclick="loadReferenceContent()" style="margin-bottom: 20px;">← Назад</button>
+                <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 20px;">${data.title}</h2>
+            `;
+            
+            data.sections.forEach((section, index) => {
+                html += `
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(event)">
+                            <div style="font-weight: 600;">${section.name}</div>
+                            <div style="font-size: 20px;">▼</div>
+                        </div>
+                        <div class="accordion-content ${index === 0 ? 'active' : ''}" style="${index === 0 ? 'max-height: 2000px;' : ''}">
+                            <div class="accordion-body">
+                                ${section.content}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('referenceContent').innerHTML = html;
+        }
+
+        function searchReference(query) {
+            if (query.length < 2) return;
+            
+            // Simple search implementation
+            const results = [];
+            Object.keys(referenceData).forEach(key => {
+                const data = referenceData[key];
+                data.sections.forEach(section => {
+                    if (section.name.toLowerCase().includes(query.toLowerCase()) || 
+                        section.content.toLowerCase().includes(query.toLowerCase())) {
+                        results.push({
+                            category: data.title,
+                            section: section.name,
+                            key: key
+                        });
+                    }
+                });
+            });
+            
+            if (results.length > 0) {
+                showToast(`Найдено ${results.length} результатов`);
+            } else {
+                showToast('Ничего не найдено');
+            }
+        }
+
+        function loadDiagnosticContent() {
+            if (!appState.diagnosticData.items) {
+                appState.diagnosticData = {
+                    patientName: '',
+                    items: [
+                        { id: 1, title: 'Место травмы', checked: false, note: '' },
+                        { id: 2, title: 'Антистимул (давление)', checked: false, note: '' },
+                        { id: 3, title: 'Определение типа рецептора', checked: false, options: [
+                            'Тонкое касание',
+                            'Грубое касание',
+                            'Нео (холод)',
+                            'Палео (тепло)',
+                            'Позиционный Гольджи',
+                            'Зуд',
+                            'Щекотка'
+                        ], selected: [] },
+                        { id: 4, title: 'УТЛ и стимул рецептора', checked: false, note: '' },
+                        { id: 5, title: 'Определение первичности/вторичности', checked: false, note: '' },
+                        { id: 6, title: 'Поиск пары P/MS дисфункция', checked: false, note: '' }
+                    ],
+                    findings: [],
+                    timestamp: new Date().toISOString()
+                };
+            }
+            
+            const data = appState.diagnosticData;
+            const completedCount = data.items.filter(item => item.checked).length;
+            const totalCount = data.items.length;
+            
+            let html = `
+                <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 20px;">Диагностический чек-лист</h2>
+                
+                <div class="card" style="margin-bottom: 20px;">
+                    <div style="font-weight: 600; margin-bottom: 8px;">Пациент</div>
+                    <input type="text" class="input-field" placeholder="Имя пациента (необязательно)" 
+                           value="${data.patientName}" onchange="updatePatientName(this.value)">
+                </div>
+                
+                <div class="card" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="font-weight: 600;">Прогресс</div>
+                        <div style="font-size: 18px; font-weight: bold; color: var(--primary);">${completedCount}/${totalCount}</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${completedCount / totalCount * 100}%"></div>
+                    </div>
+                </div>
+            `;
+            
+            data.items.forEach((item, index) => {
+                html += `
+                    <div class="checklist-item">
+                        <div class="checklist-header">
+                            <div class="checkbox ${item.checked ? 'checked' : ''}" onclick="toggleChecklistItem(${index})">
+                                ${item.checked ? '✓' : ''}
+                            </div>
+                            <div class="checklist-title">${item.id}. ${item.title}</div>
+                        </div>
+                `;
+                
+                if (item.options) {
+                    html += '<div style="margin-top: 12px;">';
+                    item.options.forEach(option => {
+                        const isSelected = item.selected && item.selected.includes(option);
+                        html += `
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <div class="checkbox ${isSelected ? 'checked' : ''}" 
+                                     style="width: 20px; height: 20px; font-size: 12px;"
+                                     onclick="toggleOption(${index}, '${option}')">
+                                    ${isSelected ? '✓' : ''}
+                                </div>
+                                <div style="font-size: 14px;">${option}</div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                } else {
+                    html += `
+                        <textarea class="input-field" placeholder="Заметки..." 
+                                  rows="2" 
+                                  onchange="updateChecklistNote(${index}, this.value)">${item.note || ''}</textarea>
+                    `;
+                }
+                
+                html += '</div>';
+            });
+            
+            html += `
+                <div class="card" style="margin-top: 20px; background: var(--bg-secondary);">
+                    <div style="font-weight: 600; margin-bottom: 12px;">Возможные дисфункции</div>
+                    <div id="diagnosticFindings" style="font-size: 14px; color: var(--text-secondary);">
+                        ${generateFindings(data)}
+                    </div>
+                </div>
+                
+                <div class="btn-row">
+                    <button class="btn" onclick="saveDiagnostic()">💾 Сохранить</button>
+                    <button class="btn btn-secondary" onclick="resetDiagnostic()">🔄 Сбросить</button>
+                </div>
+            `;
+            
+            document.getElementById('diagnosticContent').innerHTML = html;
+        }
+
+        function toggleChecklistItem(index) {
+            appState.diagnosticData.items[index].checked = !appState.diagnosticData.items[index].checked;
+            saveState();
+            loadDiagnosticContent();
+        }
+
+        function toggleOption(itemIndex, option) {
+            const item = appState.diagnosticData.items[itemIndex];
+            if (!item.selected) item.selected = [];
+            
+            const optionIndex = item.selected.indexOf(option);
+            if (optionIndex > -1) {
+                item.selected.splice(optionIndex, 1);
+            } else {
+                item.selected.push(option);
+            }
+            
+            // Auto-check if any option selected
+            if (item.selected.length > 0) {
+                item.checked = true;
+            }
+            
+            saveState();
+            loadDiagnosticContent();
+        }
+
+        function updateChecklistNote(index, value) {
+            appState.diagnosticData.items[index].note = value;
+            saveState();
+        }
+
+        function updatePatientName(value) {
+            appState.diagnosticData.patientName = value;
+            saveState();
+        }
+
+        function generateFindings(data) {
+            const findings = [];
+            
+            // Check what's selected
+            const receptorItem = data.items[2];
+            if (receptorItem.selected && receptorItem.selected.length > 0) {
+                receptorItem.selected.forEach(receptor => {
+                    switch(receptor) {
+                        case 'Тонкое касание':
+                            findings.push('• Дисфункция рецепторов Мейснера или Меркеля (паттерн NWR)');
+                            findings.push('• Проверить проводящий путь DCML');
+                            break;
+                        case 'Грубое касание':
+                            findings.push('• Дисфункция рецепторов Пачини или Руффини (паттерн PMRF)');
+                            findings.push('• Проверить спиноталамический путь');
+                            break;
+                        case 'Нео (холод)':
+                            findings.push('• Холодовые рецепторы (Aδ волокна, паттерн NWR)');
+                            findings.push('• Возможна пара с Палео (PMRF) 85%');
+                            break;
+                        case 'Палео (тепло)':
+                            findings.push('• Тепловые рецепторы (C волокна, паттерн PMRF)');
+                            findings.push('• Возможна пара с Нео (NWR) 85%');
+                            break;
+                        case 'Позиционный Гольджи':
+                            findings.push('• Проверить сознательную/бессознательную дисфункцию');
+                            findings.push('• Найти пару P (связка 1) и MS (связка 2)');
+                            findings.push('• Применить правила TL и антистимула');
+                            break;
+                        case 'Зуд':
+                            findings.push('• Паттерн NAR (Nociceptive Approach Reflex)');
+                            findings.push('• Противоположный стимул: щекотка');
+                            findings.push('• Антистимул: расчёсывание (боль), глубокое давление');
+                            break;
+                        case 'Щекотка':
+                            findings.push('• Паттерн NWR (быстрая передача)');
+                            findings.push('• Противоположный стимул: зуд');
+                            findings.push('• Антистимул: глубокое давление');
+                            break;
+                    }
+                });
+            }
+            
+            if (findings.length === 0) {
+                return 'Выберите тип рецептора для получения рекомендаций';
+            }
+            
+            return findings.join('<br>');
+        }
+
+        function saveDiagnostic() {
+            const data = appState.diagnosticData;
+            
+            if (data.patientName) {
+                // Save to patient if name provided
+                const patient = appState.patients.find(p => p.name === data.patientName);
+                if (patient) {
+                    if (!patient.visits) patient.visits = [];
+                    patient.visits.push({
+                        date: new Date().toLocaleDateString('ru-RU'),
+                        checklist: JSON.parse(JSON.stringify(data.items)),
+                        findings: generateFindings(data)
+                    });
+                    patient.lastVisit = new Date().toLocaleDateString('ru-RU');
+                } else {
+                    // Create new patient
+                    appState.patients.push({
+                        name: data.patientName,
+                        lastVisit: new Date().toLocaleDateString('ru-RU'),
+                        visits: [{
+                            date: new Date().toLocaleDateString('ru-RU'),
+                            checklist: JSON.parse(JSON.stringify(data.items)),
+                            findings: generateFindings(data)
+                        }]
+                    });
+                }
+            }
+            
+            saveState();
+            showToast('✅ Диагностика сохранена');
+        }
+
+        function resetDiagnostic() {
+            if (confirm('Сбросить все данные чек-листа?')) {
+                appState.diagnosticData = {};
+                saveState();
+                loadDiagnosticContent();
+                showToast('🔄 Чек-лист сброшен');
+            }
+        }
+
+        function loadPatientsContent() {
+            if (appState.patients.length === 0) {
+                document.getElementById('patientsContent').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">👤</div>
+                        <div class="empty-title">Пока нет пациентов</div>
+                        <div class="empty-text">Добавьте первого пациента для начала работы</div>
+                        <button class="btn" onclick="addPatient()">+ Добавить пациента</button>
+                    </div>
+                `;
+            } else {
+                // Show patients list
+                let html = '<h2 style="font-size: 24px; font-weight: 600; margin-bottom: 20px;">База пациентов</h2>';
+                html += '<button class="btn" onclick="addPatient()" style="margin-bottom: 20px;">+ Добавить пациента</button>';
+                
+                appState.patients.forEach((patient, index) => {
+                    const visitsCount = patient.visits ? patient.visits.length : 0;
+                    html += `
+                        <div class="patient-card" onclick="viewPatient(${index})">
+                            <div class="patient-header">
+                                <div class="patient-name">👤 ${patient.name}</div>
+                                <button class="btn btn-danger" onclick="event.stopPropagation(); deletePatient(${index})" 
+                                        style="padding: 8px 16px; width: auto; margin: 0;">
+                                    🗑️
+                                </button>
+                            </div>
+                            <div class="patient-info">📅 Последний приём: ${patient.lastVisit || 'Не указано'}</div>
+                            <div class="patient-info">📋 Всего записей: ${visitsCount}</div>
+                        </div>
+                    `;
+                });
+                
+                document.getElementById('patientsContent').innerHTML = html;
+            }
+        }
+
+        function addPatient() {
+            const name = prompt('Имя пациента:');
+            if (name && name.trim()) {
+                appState.patients.push({
+                    name: name.trim(),
+                    lastVisit: new Date().toLocaleDateString('ru-RU'),
+                    visits: [],
+                    notes: ''
+                });
+                saveState();
+                loadPatientsContent();
+                showToast('✅ Пациент добавлен');
+            }
+        }
+
+        function viewPatient(index) {
+            const patient = appState.patients[index];
+            
+            let html = `
+                <button class="btn btn-secondary" onclick="loadPatientsContent()" style="margin-bottom: 20px;">← Назад</button>
+                
+                <div class="card" style="margin-bottom: 20px;">
+                    <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 16px;">👤 ${patient.name}</h2>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">Последний приём</div>
+                            <div style="font-weight: 600;">${patient.lastVisit || 'Не указано'}</div>
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">Всего записей</div>
+                            <div style="font-weight: 600;">${patient.visits ? patient.visits.length : 0}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-bottom: 20px;">
+                    <div style="font-weight: 600; margin-bottom: 12px;">Общие заметки</div>
+                    <textarea class="input-field" rows="3" placeholder="Заметки о пациенте..." 
+                              onchange="updatePatientNotes(${index}, this.value)">${patient.notes || ''}</textarea>
+                </div>
+                
+                <button class="btn" onclick="addVisitToPatient(${index})">+ Добавить запись о приёме</button>
+                
+                <h3 style="font-size: 18px; font-weight: 600; margin: 30px 0 16px 0;">История приёмов</h3>
+            `;
+            
+            if (patient.visits && patient.visits.length > 0) {
+                patient.visits.reverse().forEach((visit, visitIndex) => {
+                    const actualIndex = patient.visits.length - 1 - visitIndex;
+                    html += `
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(event)">
+                                <div>
+                                    <div style="font-weight: 600;">📅 ${visit.date}</div>
+                                    ${visit.diagnosis ? `<div style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">${visit.diagnosis}</div>` : ''}
+                                </div>
+                                <div style="font-size: 20px;">▼</div>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="accordion-body">
+                                    ${visit.checklist ? `
+                                        <div style="margin-bottom: 16px;">
+                                            <div style="font-weight: 600; margin-bottom: 8px;">Чек-лист диагностики:</div>
+                                            ${visit.checklist.map(item => `
+                                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                                    <div style="color: ${item.checked ? 'var(--success)' : 'var(--text-secondary)'};">
+                                                        ${item.checked ? '✓' : '○'}
+                                                    </div>
+                                                    <div style="font-size: 14px;">${item.title}</div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    ` : ''}
+                                    
+                                    ${visit.findings ? `
+                                        <div style="margin-bottom: 16px;">
+                                            <div style="font-weight: 600; margin-bottom: 8px;">Находки:</div>
+                                            <div style="font-size: 14px; padding: 12px; background: var(--bg-secondary); border-radius: 8px;">
+                                                ${visit.findings}
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                    
+                                    ${visit.notes ? `
+                                        <div style="margin-bottom: 16px;">
+                                            <div style="font-weight: 600; margin-bottom: 8px;">Заметки:</div>
+                                            <div style="font-size: 14px;">${visit.notes}</div>
+                                        </div>
+                                    ` : ''}
+                                    
+                                    <button class="btn btn-danger" onclick="deleteVisit(${index}, ${actualIndex})">
+                                        🗑️ Удалить запись
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                html += '<div class="empty-state"><div class="empty-text">Пока нет записей о приёмах</div></div>';
+            }
+            
+            document.getElementById('patientsContent').innerHTML = html;
+        }
+
+        function updatePatientNotes(index, value) {
+            appState.patients[index].notes = value;
+            saveState();
+        }
+
+        function addVisitToPatient(patientIndex) {
+            const diagnosis = prompt('Краткий диагноз:');
+            const notes = prompt('Заметки о приёме:');
+            
+            const patient = appState.patients[patientIndex];
+            if (!patient.visits) patient.visits = [];
+            
+            patient.visits.push({
+                date: new Date().toLocaleDateString('ru-RU'),
+                diagnosis: diagnosis || '',
+                notes: notes || '',
+                checklist: null,
+                findings: ''
+            });
+            
+            patient.lastVisit = new Date().toLocaleDateString('ru-RU');
+            
+            saveState();
+            viewPatient(patientIndex);
+            showToast('✅ Запись добавлена');
+        }
+
+        function deleteVisit(patientIndex, visitIndex) {
+            if (confirm('Удалить эту запись?')) {
+                appState.patients[patientIndex].visits.splice(visitIndex, 1);
+                saveState();
+                viewPatient(patientIndex);
+                showToast('🗑️ Запись удалена');
+            }
+        }
+
+        function deletePatient(index) {
+            if (confirm(`Удалить пациента "${appState.patients[index].name}" и все записи о нём?`)) {
+                appState.patients.splice(index, 1);
+                saveState();
+                loadPatientsContent();
+                showToast('🗑️ Пациент удалён');
+            }
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            updateUI();
+            
+            // Register Service Worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            }
+        };
+    </script>
+</body>
+</html>
